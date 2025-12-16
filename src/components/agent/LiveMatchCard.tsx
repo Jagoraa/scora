@@ -88,8 +88,8 @@ const LiveMatchCard = ({ match, isLoading }: LiveMatchCardProps) => {
                     {match.status === "live" ? "🔴 Live Match" : "📅 Upcoming Match"}
                 </h2>
                 <span className={`px-3 py-1 rounded-full text-xs md:text-sm font-semibold ${match.status === "live"
-                        ? "bg-red-100 text-red-700"
-                        : "bg-blue-100 text-blue-700"
+                    ? "bg-red-100 text-red-700"
+                    : "bg-blue-100 text-blue-700"
                     }`}>
                     {match.status === "live" ? "LIVE" : "SCHEDULED"}
                 </span>
@@ -99,41 +99,39 @@ const LiveMatchCard = ({ match, isLoading }: LiveMatchCardProps) => {
                 {/* Score Section */}
                 <div className="flex items-center justify-between gap-4">
                     <motion.div
-                        whileHover={{ scale: 1.05 }}
                         className="flex-1 text-center"
                     >
-                        <div className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+                        <img
+                            src={match.homeTeamLogo}
+                            alt={match.homeTeam}
+                            className="w-12 h-12 md:w-16 md:h-16 object-contain mx-auto mb-2"
+                        />
+                        <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">
                             {match.homeTeam}
                         </div>
-                        <div className="text-2xl md:text-3xl font-bold text-primary">
+                        <div className="text-xl md:text-2xl font-bold text-primary">
                             {match.homeScore ?? "-"}
                         </div>
                     </motion.div>
 
                     <div className="flex flex-col items-center gap-2">
-                        <img
-                            src={match.homeTeamLogo}
-                            alt={match.homeTeam}
-                            className="w-16 h-16 md:w-20 md:h-20 object-contain"
-                        />
-                        <span className="text-xs md:text-sm text-muted-foreground font-semibold">
+                        <span className="text-lg md:text-xl text-muted-foreground font-semibold">
                             VS
                         </span>
-                        <img
-                            src={match.awayTeamLogo}
-                            alt={match.awayTeam}
-                            className="w-16 h-16 md:w-20 md:h-20 object-contain"
-                        />
                     </div>
 
                     <motion.div
-                        whileHover={{ scale: 1.05 }}
                         className="flex-1 text-center"
                     >
-                        <div className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+                        <img
+                            src={match.awayTeamLogo}
+                            alt={match.awayTeam}
+                            className="w-12 h-12 md:w-16 md:h-16 object-contain mx-auto mb-2"
+                        />
+                        <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">
                             {match.awayTeam}
                         </div>
-                        <div className="text-2xl md:text-3xl font-bold text-primary">
+                        <div className="text-xl md:text-2xl font-bold text-primary">
                             {match.awayScore ?? "-"}
                         </div>
                     </motion.div>

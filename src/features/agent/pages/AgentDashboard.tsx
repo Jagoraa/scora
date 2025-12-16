@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Play, Calendar } from "lucide-react";
+import { ArrowRight, Play, Calendar, User, Activity, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import AgentLayout from "@/components/layout/AgentLayout";
@@ -14,9 +14,11 @@ import {
     mockAgentProfile,
     mockAssignedMatches,
 } from "@/data/agentMockData";
+import { useNavigate } from "react-router-dom";
 
 const AgentDashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Simulate data loading
@@ -97,6 +99,7 @@ const AgentDashboard = () => {
                                     >
                                         {currentMatch.status === "live" && (
                                             <Button
+                                                onClick={() => navigate(`/agent/match/${currentMatch.id}`)}
                                                 className="bg-accent hover:bg-accent/90 text-white font-semibold gap-2 text-sm md:text-base"
                                             >
                                                 <Play className="w-4 h-4 md:w-5 md:h-5" />
@@ -105,10 +108,11 @@ const AgentDashboard = () => {
                                         )}
                                         {currentMatch.status !== "live" && (
                                             <Button
+                                                onClick={() => navigate(`/agent/match/${currentMatch.id}`)}
                                                 className="bg-accent hover:bg-accent/90 text-white font-semibold gap-2 text-sm md:text-base"
                                             >
                                                 <Calendar className="w-4 h-4 md:w-5 md:h-5" />
-                                                View Schedule
+                                                Prepare for Match
                                             </Button>
                                         )}
                                     </motion.div>
@@ -228,32 +232,41 @@ const AgentDashboard = () => {
                                     </h3>
 
                                     <div className="space-y-3 text-sm md:text-base">
-                                        <div>
-                                            <p className="text-xs md:text-sm text-muted-foreground mb-1">
-                                                Agent Code
-                                            </p>
-                                            <p className="font-semibold text-foreground">
-                                                {mockAgentProfile.agentCode}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs md:text-sm text-muted-foreground mb-1">
-                                                Status
-                                            </p>
-                                            <div className="flex items-center gap-2">
-                                                <span className="w-2 h-2 md:w-2.5 md:h-2.5 bg-success rounded-full" />
-                                                <p className="font-semibold text-foreground capitalize">
-                                                    {mockAgentProfile.status}
+                                        <div className="flex items-center gap-3">
+                                            <User className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground" />
+                                            <div>
+                                                <p className="text-xs md:text-sm text-muted-foreground mb-1">
+                                                    Agent Code
+                                                </p>
+                                                <p className="font-semibold text-foreground">
+                                                    {mockAgentProfile.agentCode}
                                                 </p>
                                             </div>
                                         </div>
-                                        <div>
-                                            <p className="text-xs md:text-sm text-muted-foreground mb-1">
-                                                Member Since
-                                            </p>
-                                            <p className="font-semibold text-foreground">
-                                                {mockAgentProfile.joinDate.toLocaleDateString("en-NG")}
-                                            </p>
+                                        <div className="flex items-center gap-3">
+                                            <Activity className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground" />
+                                            <div>
+                                                <p className="text-xs md:text-sm text-muted-foreground mb-1">
+                                                    Status
+                                                </p>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="w-2 h-2 md:w-2.5 md:h-2.5 bg-success rounded-full" />
+                                                    <p className="font-semibold text-foreground capitalize">
+                                                        {mockAgentProfile.status}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <Clock className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground" />
+                                            <div>
+                                                <p className="text-xs md:text-sm text-muted-foreground mb-1">
+                                                    Member Since
+                                                </p>
+                                                <p className="font-semibold text-foreground">
+                                                    {mockAgentProfile.joinDate.toLocaleDateString("en-NG")}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </Card>
