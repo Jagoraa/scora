@@ -8,6 +8,7 @@ import MatchDetailPage from "@/features/user/pages/MatchDetailPage";
 import StandingsPage from "@/features/user/pages/StandingsPage";
 import CalendarPage from "@/features/user/pages/CalendarPage";
 import StatsPage from "@/features/user/pages/StatsPage";
+import TermsPage from "@/features/user/pages/TermsPage";
 import AgentLoginPage from "@/features/agent/pages/AgentLoginPage";
 import NotFound from "@/NotFound";
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/standings" element={<StandingsPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/stats" element={<StatsPage />} />
+          <Route path="/terms" element={<TermsPage />} />
 
           {/* Agent Routes */}
           <Route path="/agent/login" element={<AgentLoginPage />} />

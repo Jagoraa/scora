@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, Shield, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ import {
     FormItem,
     FormMessage,
 } from "@/components/ui/form";
+import ForgotPasswordModal from "@/components/common/ForgotPasswordModal";
 
 // Validation schema
 const loginSchema = z.object({
@@ -30,10 +32,18 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+// Spinner component
+const Spinner = () => (
+    <div className="flex items-center justify-center">
+        <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+    </div>
+);
+
 const AgentLoginPage = () => {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [showForgotModal, setShowForgotModal] = useState(false);
 
     const form = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
@@ -64,35 +74,50 @@ const AgentLoginPage = () => {
         }
     };
 
-    // Animation variants
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.2,
-                delayChildren: 0.1,
+    const handleForgotPasswordSubmit = async (email: string) => {
+        // TODO: Replace with actual API call
+        console.log("Forgot password request:", email);
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+    };
+
+    // Animation variants - memoized to prevent lint errors
+    const containerVariants = useMemo<Variants>(
+        () => ({
+            hidden: { opacity: 0 },
+            visible: {
+                opacity: 1,
+                transition: {
+                    staggerChildren: 0.2,
+                    delayChildren: 0.1,
+                },
             },
-        },
-    };
+        }),
+        []
+    );
 
-    const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.6, ease: "easeOut" },
-        },
-    };
+    const itemVariants = useMemo<Variants>(
+        () => ({
+            hidden: { opacity: 0, y: 20 },
+            visible: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.6, ease: "easeOut" },
+            },
+        }),
+        []
+    );
 
-    const heroVariants = {
-        hidden: { opacity: 0, x: -50 },
-        visible: {
-            opacity: 1,
-            x: 0,
-            transition: { duration: 0.8, ease: "easeOut" },
-        },
-    };
+    const heroVariants = useMemo<Variants>(
+        () => ({
+            hidden: { opacity: 0, x: -50 },
+            visible: {
+                opacity: 1,
+                x: 0,
+                transition: { duration: 0.8, ease: "easeOut" },
+            },
+        }),
+        []
+    );
 
     return (
         <div className="min-h-screen bg-background overflow-hidden">
@@ -207,7 +232,7 @@ const AgentLoginPage = () => {
                                                                 placeholder="agent@scora.ng"
                                                                 type="email"
                                                                 disabled={isLoading}
-                                                                className="pl-10 bg-input border-border/50 focus:border-accent focus:ring-accent/20 transition-colors"
+                                                                className="pl-10 bg-input border-2 border-border/50 focus:border-accent focus:outline-none transition-colors"
                                                                 {...field}
                                                             />
                                                         </div>
@@ -234,7 +259,7 @@ const AgentLoginPage = () => {
                                                                 placeholder="••••••••"
                                                                 type={showPassword ? "text" : "password"}
                                                                 disabled={isLoading}
-                                                                className="pl-10 pr-10 bg-input border-border/50 focus:border-accent focus:ring-accent/20 transition-colors"
+                                                                className="pl-10 pr-10 bg-input border-2 border-border/50 focus:border-accent focus:outline-none transition-colors"
                                                                 {...field}
                                                             />
                                                             <button
@@ -281,8 +306,8 @@ const AgentLoginPage = () => {
                                                 )}
                                             />
                                             <a
-                                                href="#forgot"
-                                                className="text-sm text-accent hover:text-accent/80 transition-colors font-medium"
+                                                onClick={() => setShowForgotModal(true)}
+                                                className="text-sm text-accent hover:text-accent/80 transition-colors font-medium cursor-pointer"
                                             >
                                                 Forgot password?
                                             </a>
@@ -295,18 +320,10 @@ const AgentLoginPage = () => {
                                             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 transition-all duration-200 hover:shadow-lg"
                                         >
                                             {isLoading ? (
-                                                <motion.div
-                                                    animate={{ rotate: 360 }}
-                                                    transition={{
-                                                        duration: 1,
-                                                        repeat: Infinity,
-                                                        ease: "linear",
-                                                    }}
-                                                    className="flex items-center gap-2"
-                                                >
-                                                    <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full" />
+                                                <div className="flex items-center gap-2">
+                                                    <Spinner />
                                                     <span>Signing in...</span>
-                                                </motion.div>
+                                                </div>
                                             ) : (
                                                 "Sign In"
                                             )}
@@ -334,11 +351,26 @@ const AgentLoginPage = () => {
                             variants={itemVariants}
                             className="mt-8 pt-6 border-t border-border/30 text-center text-xs text-muted-foreground"
                         >
-                            <p>By signing in, you agree to our Terms of Service</p>
+                            <p>
+                                By signing in, you agree to our{" "}
+                                <a
+                                    onClick={() => navigate("/terms")}
+                                    className="text-accent hover:text-accent/80 transition-colors cursor-pointer font-medium"
+                                >
+                                    Terms of Service
+                                </a>
+                            </p>
                         </motion.div>
                     </div>
                 </motion.div>
             </div>
+
+            {/* Forgot Password Modal */}
+            <ForgotPasswordModal
+                open={showForgotModal}
+                onOpenChange={setShowForgotModal}
+                onSubmit={handleForgotPasswordSubmit}
+            />
         </div>
     );
 };
