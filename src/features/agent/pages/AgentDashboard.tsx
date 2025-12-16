@@ -1,20 +1,17 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Play, Calendar, Clock } from "lucide-react";
+import { ArrowRight, Play, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import AgentLayout from "@/components/layout/AgentLayout";
 import {
     WelcomeCardSkeleton,
-    StatCardSkeleton,
     MatchCardSkeleton,
     EventListSkeleton,
 } from "@/components/common/Skeleton";
 import {
     mockAgentProfile,
-    mockAgentStats,
     mockAssignedMatches,
-    mockRecentEvents,
 } from "@/data/agentMockData";
 
 const AgentDashboard = () => {
@@ -55,18 +52,6 @@ const AgentDashboard = () => {
             hour: "2-digit",
             minute: "2-digit",
         });
-    };
-
-    const getEventIcon = (type: string) => {
-        const icons: Record<string, string> = {
-            goal: "⚽",
-            yellow_card: "🟨",
-            red_card: "🟥",
-            substitution: "🔄",
-            foul: "⚠️",
-            corner: "🚩",
-        };
-        return icons[type] || "📢";
     };
 
     return (
@@ -133,42 +118,8 @@ const AgentDashboard = () => {
                     </motion.div>
 
                     {/* Stats Grid */}
-                    <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                        {isLoading ? (
-                            <>
-                                <StatCardSkeleton />
-                                <StatCardSkeleton />
-                                <StatCardSkeleton />
-                                <StatCardSkeleton />
-                            </>
-                        ) : (
-                            <>
-                                <StatsCard
-                                    label="Matches Logged"
-                                    value={mockAgentStats.matchesLogged}
-                                    icon="📊"
-                                    delay={0.3}
-                                />
-                                <StatsCard
-                                    label="Events Recorded"
-                                    value={mockAgentStats.eventsRecorded}
-                                    icon="📝"
-                                    delay={0.4}
-                                />
-                                <StatsCard
-                                    label="Accuracy Rate"
-                                    value={`${mockAgentStats.accuracyRate}%`}
-                                    icon="✅"
-                                    delay={0.5}
-                                />
-                                <StatsCard
-                                    label="This Month"
-                                    value={`${mockAgentStats.monthlyPerformance}%`}
-                                    icon="🎯"
-                                    delay={0.6}
-                                />
-                            </>
-                        )}
+                    <motion.div variants={itemVariants} className="hidden">
+                        {/* Stats moved to dedicated Stats page */}
                     </motion.div>
 
                     {/* Main Content Grid */}
@@ -267,42 +218,49 @@ const AgentDashboard = () => {
                                 )}
                             </motion.div>
 
-                            {/* Recent Events */}
+                            {/* Recent Matches */}
                             <motion.div variants={itemVariants}>
                                 {isLoading ? (
                                     <EventListSkeleton />
                                 ) : (
                                     <Card className="rounded-2xl p-6 md:p-8 shadow-lg border border-border">
                                         <h2 className="text-xl md:text-2xl font-bold text-foreground mb-6">
-                                            Recent Events
+                                            Recent Matches
                                         </h2>
 
                                         <div className="space-y-4">
-                                            {mockRecentEvents.map((event, idx) => (
+                                            {mockAssignedMatches.map((match, idx) => (
                                                 <motion.div
-                                                    key={event.id}
+                                                    key={match.id}
                                                     initial={{ opacity: 0, x: -20 }}
                                                     animate={{ opacity: 1, x: 0 }}
                                                     transition={{ delay: 0.5 + idx * 0.05 }}
-                                                    className="flex items-start gap-3 pb-4 border-b border-border/50 last:border-0 last:pb-0"
+                                                    className="flex items-center justify-between gap-3 p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
                                                 >
-                                                    <span className="text-2xl flex-shrink-0">
-                                                        {getEventIcon(event.type)}
-                                                    </span>
-                                                    <div className="flex-1 min-w-0">
+                                                    <div className="flex-1">
                                                         <p className="text-sm md:text-base font-semibold text-foreground">
-                                                            {event.player}
+                                                            {match.homeTeam} vs {match.awayTeam}
                                                         </p>
                                                         <p className="text-xs md:text-sm text-muted-foreground">
-                                                            {event.team} • Minute {event.minute}
+                                                            {match.venue}
                                                         </p>
                                                     </div>
-                                                    <div className="flex items-center gap-1 text-xs md:text-sm text-muted-foreground flex-shrink-0">
-                                                        <Clock className="w-3 h-3 md:w-4 md:h-4" />
-                                                        {event.timestamp.toLocaleTimeString("en-NG", {
-                                                            hour: "2-digit",
-                                                            minute: "2-digit",
-                                                        })}
+                                                    <div className="flex items-center gap-3">
+                                                        {match.status === "completed" && (
+                                                            <div className="text-right">
+                                                                <p className="text-sm md:text-base font-bold text-foreground">
+                                                                    {match.homeScore}-{match.awayScore}
+                                                                </p>
+                                                            </div>
+                                                        )}
+                                                        <span className={`px-3 py-1 rounded-full text-xs md:text-sm font-semibold ${match.status === "live"
+                                                            ? "bg-red-100 text-red-700"
+                                                            : match.status === "completed"
+                                                                ? "bg-green-100 text-green-700"
+                                                                : "bg-blue-100 text-blue-700"
+                                                            }`}>
+                                                            {match.status === "live" ? "LIVE" : match.status === "completed" ? "DONE" : "SCHEDULED"}
+                                                        </span>
                                                     </div>
                                                 </motion.div>
                                             ))}
@@ -394,44 +352,5 @@ const AgentDashboard = () => {
         </AgentLayout>
     );
 };
-
-// Stats Card Component
-const StatsCard = ({
-    label,
-    value,
-    icon,
-    delay,
-}: {
-    label: string;
-    value: string | number;
-    icon: string;
-    delay: number;
-}) => (
-    <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay }}
-        whileHover={{ scale: 1.02, translateY: -5 }}
-        className="bg-white rounded-2xl p-6 shadow-lg border border-border overflow-hidden group cursor-pointer"
-    >
-        <div className="flex items-start justify-between mb-4">
-            <h3 className="text-xs md:text-sm text-muted-foreground font-semibold uppercase tracking-wider">
-                {label}
-            </h3>
-            <span className="text-3xl md:text-4xl group-hover:scale-110 transition-transform">
-                {icon}
-            </span>
-        </div>
-        <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
-            {value}
-        </p>
-        <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: delay + 0.3 }}
-            className="h-1 bg-gradient-to-r from-primary to-accent rounded-full mt-4 origin-left"
-        />
-    </motion.div>
-);
 
 export default AgentDashboard;

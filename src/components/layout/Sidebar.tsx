@@ -4,13 +4,13 @@ import { motion } from "framer-motion";
 import {
     Home,
     Target,
-    Play,
+    TrendingUp,
     ClipboardList,
     Settings,
     X,
     ChevronRight,
 } from "lucide-react";
-import NavItem from "./NavItem";
+import NavItem from "./NavItem.tsx";
 
 interface NavItemType {
     id: string;
@@ -40,10 +40,10 @@ const navItems: NavItemType[] = [
         path: "/agent/assigned-matches",
     },
     {
-        id: "live",
-        label: "Live Match",
-        icon: <Play className="w-6 h-6" />,
-        path: "/agent/live-match",
+        id: "stats",
+        label: "Stats",
+        icon: <TrendingUp className="w-6 h-6" />,
+        path: "/agent/stats",
     },
     {
         id: "events",
@@ -113,10 +113,10 @@ const Sidebar = ({
                 animate={isMobile ? (isOpen ? "open" : "closed") : "open"}
                 variants={sidebarVariants}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className={`fixed lg:static top-0 left-0 h-screen ${sidebarWidth} bg-primary text-primary-foreground transition-all duration-300 flex flex-col z-50 overflow-hidden`}
+                className={`fixed lg:static top-0 left-0 h-screen ${sidebarWidth} bg-white text-foreground transition-all duration-300 flex flex-col z-50 overflow-hidden border-r border-border`}
             >
                 {/* Header with close button */}
-                <div className="p-4 flex items-center justify-between border-b border-primary/30">
+                <div className="p-4 flex items-center justify-between border-b border-border">
                     {!isCollapsed && (
                         <motion.div
                             initial={{ opacity: 0 }}
@@ -130,9 +130,9 @@ const Sidebar = ({
                     {isMobile && (
                         <button
                             onClick={onClose}
-                            className="lg:hidden p-1 hover:bg-primary/20 rounded-md transition-colors"
+                            className="lg:hidden p-1 hover:bg-secondary rounded-md transition-colors"
                         >
-                            <X className="w-5 h-5" />
+                            <X className="w-5 h-5 text-foreground" />
                         </button>
                     )}
                 </div>
@@ -152,12 +152,12 @@ const Sidebar = ({
 
                 {/* Collapse Toggle (Desktop Only) */}
                 {!isMobile && (
-                    <div className="p-4 border-t border-primary/30">
+                    <div className="p-4 border-t border-border">
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => onCollapsedChange(!isCollapsed)}
-                            className="w-full flex items-center justify-center p-2 hover:bg-primary/20 rounded-md transition-colors"
+                            className="w-full flex items-center justify-center p-2 hover:bg-secondary rounded-md transition-colors"
                             title={isCollapsed ? "Expand" : "Collapse"}
                         >
                             <ChevronRight
