@@ -4,6 +4,7 @@ import { ArrowRight, Play, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import AgentLayout from "@/components/layout/AgentLayout";
+import LiveMatchCard from "@/components/agent/LiveMatchCard";
 import {
     WelcomeCardSkeleton,
     MatchCardSkeleton,
@@ -24,8 +25,7 @@ const AgentDashboard = () => {
     }, []);
 
     // Get the live or next scheduled match
-    const currentMatch = mockAssignedMatches[0]; // First match (live)
-    const nextMatch = mockAssignedMatches.find((m) => m.status === "scheduled");
+    const currentMatch = mockAssignedMatches.find((m) => m.status === "scheduled") || mockAssignedMatches[0]; // Next scheduled or first match
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -85,7 +85,7 @@ const AgentDashboard = () => {
                                         <p className="text-primary-foreground/80 text-sm md:text-base">
                                             {currentMatch.status === "live"
                                                 ? `You're currently logging the match between ${currentMatch.homeTeam} and ${currentMatch.awayTeam}`
-                                                : `Your next match is ${nextMatch?.homeTeam} vs ${nextMatch?.awayTeam} at ${nextMatch ? formatTime(nextMatch.startTime) : "N/A"}`}
+                                                : `Your next match is ${currentMatch.homeTeam} vs ${currentMatch.awayTeam} at ${formatTime(currentMatch.startTime)}`}
                                         </p>
                                     </motion.div>
 
@@ -103,7 +103,7 @@ const AgentDashboard = () => {
                                                 Continue Logging
                                             </Button>
                                         )}
-                                        {nextMatch && currentMatch.status !== "live" && (
+                                        {currentMatch.status !== "live" && (
                                             <Button
                                                 className="bg-accent hover:bg-accent/90 text-white font-semibold gap-2 text-sm md:text-base"
                                             >
@@ -128,93 +128,7 @@ const AgentDashboard = () => {
                         <div className="lg:col-span-2 space-y-6 md:space-y-8">
                             {/* Current/Featured Match */}
                             <motion.div variants={itemVariants}>
-                                {isLoading ? (
-                                    <MatchCardSkeleton />
-                                ) : (
-                                    <Card className="rounded-2xl p-6 md:p-8 shadow-lg border border-border overflow-hidden">
-                                        <div className="flex items-center justify-between mb-6">
-                                            <h2 className="text-xl md:text-2xl font-bold text-foreground">
-                                                {currentMatch.status === "live" ? "🔴 Live Match" : "📅 Next Match"}
-                                            </h2>
-                                            <span className="px-3 py-1 bg-accent/10 text-accent text-xs md:text-sm font-semibold rounded-full">
-                                                {currentMatch.status === "live" ? "LIVE" : "SCHEDULED"}
-                                            </span>
-                                        </div>
-
-                                        <div className="space-y-6">
-                                            {/* Score Section */}
-                                            <div className="flex items-center justify-between gap-4">
-                                                <motion.div
-                                                    whileHover={{ scale: 1.05 }}
-                                                    className="flex-1 text-center"
-                                                >
-                                                    <div className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                                                        {currentMatch.homeTeam}
-                                                    </div>
-                                                    <div className="text-2xl md:text-3xl font-bold text-primary">
-                                                        {currentMatch.homeScore ?? "-"}
-                                                    </div>
-                                                </motion.div>
-
-                                                <div className="flex flex-col items-center gap-2">
-                                                    <div className="text-4xl md:text-5xl">
-                                                        {currentMatch.homeTeamLogo}
-                                                    </div>
-                                                    <span className="text-xs md:text-sm text-muted-foreground font-semibold">
-                                                        VS
-                                                    </span>
-                                                    <div className="text-4xl md:text-5xl">
-                                                        {currentMatch.awayTeamLogo}
-                                                    </div>
-                                                </div>
-
-                                                <motion.div
-                                                    className="flex-1 text-center"
-                                                >
-                                                    <div className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                                                        {currentMatch.awayTeam}
-                                                    </div>
-                                                    <div className="text-2xl md:text-3xl font-bold text-primary">
-                                                        {currentMatch.awayScore ?? "-"}
-                                                    </div>
-                                                </motion.div>
-                                            </div>
-
-                                            {/* Match Details */}
-                                            <div className="grid grid-cols-2 gap-4 py-4 border-t border-b border-border">
-                                                <div>
-                                                    <p className="text-xs md:text-sm text-muted-foreground mb-1">
-                                                        Venue
-                                                    </p>
-                                                    <p className="text-sm md:text-base font-semibold text-foreground">
-                                                        {currentMatch.venue}
-                                                    </p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs md:text-sm text-muted-foreground mb-1">
-                                                        League
-                                                    </p>
-                                                    <p className="text-sm md:text-base font-semibold text-foreground">
-                                                        {currentMatch.league}
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            {/* Action Button */}
-                                            {currentMatch.status === "live" && (
-                                                <motion.div
-                                                    whileHover={{ scale: 1.02 }}
-                                                    whileTap={{ scale: 0.98 }}
-                                                >
-                                                    <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold gap-2 py-2.5 md:py-3">
-                                                        <Play className="w-4 h-4 md:w-5 md:h-5" />
-                                                        Log Event
-                                                    </Button>
-                                                </motion.div>
-                                            )}
-                                        </div>
-                                    </Card>
-                                )}
+                                <LiveMatchCard match={currentMatch} isLoading={isLoading} />
                             </motion.div>
 
                             {/* Recent Matches */}
