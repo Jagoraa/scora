@@ -10,6 +10,7 @@ import CalendarPage from "@/features/user/pages/CalendarPage";
 import StatsPage from "@/features/user/pages/StatsPage";
 import TermsPage from "@/features/user/pages/TermsPage";
 import AgentLoginPage from "@/features/agent/pages/AgentLoginPage";
+import AgentDashboard from "@/features/agent/pages/AgentDashboard";
 import NotFound from "@/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
 
           {/* Agent Routes */}
           <Route path="/agent/login" element={<AgentLoginPage />} />
+          <Route path="/agent/dashboard" element={<AgentDashboard />} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
