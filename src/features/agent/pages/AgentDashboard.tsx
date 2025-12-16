@@ -169,7 +169,6 @@ const AgentDashboard = () => {
                                                 </div>
 
                                                 <motion.div
-                                                    whileHover={{ scale: 1.05 }}
                                                     className="flex-1 text-center"
                                                 >
                                                     <div className="text-3xl md:text-4xl font-bold text-foreground mb-2">
